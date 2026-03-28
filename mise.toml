@@ -1,0 +1,8 @@
+[tools]
+uv = "0.10.0"
+
+[tasks.sync]
+run = "uv sync"
+
+[tasks.export]
+run = "uv export --no-hashes --format requirements.txt --output-file requirements.txt"
