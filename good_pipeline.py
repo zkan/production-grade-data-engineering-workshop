@@ -102,6 +102,34 @@ validate_schema(
 )
 
 
+import functools
+import time
+
+
+def retry(func, *args, max_attempts=3, delay_seconds=30, backoff=2.0, **kwargs):
+    delay = delay_seconds
+    for attempt in range(1, max_attempts + 1):
+        try:
+            return func(*args, **kwargs)
+        except (ConnectionError, TimeoutError, TypeError) as e:
+            if attempt == max_attempts:
+                raise
+            print(f"Attempt {attempt} failed: {e} — retrying in {delay}s")
+            time.sleep(delay)
+            delay *= backoff
+
+
+def with_retry(max_attempts=3, delay_seconds=30, backoff=2.0):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            return retry(func, *args, max_attempts=max_attempts,
+                         delay_seconds=delay_seconds, backoff=backoff, **kwargs)
+        return wrapper
+    return decorator
+
+
+@with_retry(max_attempts=3, delay_seconds=5, backoff=2.0)
 def reliable_pipeline(raw_df: pd.DataFrame, partition_date: str, output: dict):
     """
     Production-grade pipeline:
