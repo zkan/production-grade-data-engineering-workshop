@@ -18,6 +18,8 @@ pytest==9.0.2
     # via production-grade-data-engineering-workshop
 python-dateutil==2.9.0.post0
     # via pandas
+pytz==2026.1.post1
+    # via production-grade-data-engineering-workshop
 six==1.17.0
     # via python-dateutil
 tzdata==2025.3 ; sys_platform == 'emscripten' or sys_platform == 'win32'
